@@ -1,0 +1,900 @@
+{
+  "ONWARD": [
+    {
+      "sI": [
+        {
+          "id": "290",
+          "fD": {
+            "aI": {
+              "code": "SG",
+              "name": "SpiceJet",
+              "isLcc": true
+            },
+            "fN": "2526",
+            "eT": "73H"
+          },
+          "stops": 1,
+          "so": [
+            {
+              "code": "HYD",
+              "name": "Shamshabad Rajiv Gandhi Intl Arpt",
+              "cityCode": "HYD",
+              "city": "Hyderabad",
+              "country": "India",
+              "countryCode": "IN",
+              "terminal": null
+            }
+          ],
+          "duration": 320,
+          "da": {
+            "code": "MAA",
+            "name": "Chennai Arpt",
+            "cityCode": "MAA",
+            "city": "Chennai",
+            "country": "India",
+            "countryCode": "IN",
+            "terminal": "Terminal 1"
+          },
+          "aa": {
+            "code": "DEL",
+            "name": "Delhi Indira Gandhi Intl",
+            "cityCode": "DEL",
+            "city": "Delhi",
+            "country": "India",
+            "countryCode": "IN",
+            "terminal": null
+          },
+          "dt": "2026-03-26T14:00",
+          "at": "2026-03-26T19:20",
+          "cT": null,
+          "iand": false,
+          "isRs": false,
+          "sN": 0,
+          "israa": null
+        }
+      ],
+      "totalPriceList": [
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 15278.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 721,
+                "agentMarkup": 0
+              },
+              "netFare": 5278.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 4401,
+                "NF": 5278.5,
+                "TAF": 10877.5,
+                "TF": 15278.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 789,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 1,
+              "bI": {
+                "iB": "15 Kg",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "ECONOMY",
+              "cB": "RS",
+              "fB": "USAV",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "PUBLISHED",
+          "id": "4-6032835220_0MAADELSG2526~868923818490112",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "290": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        }
+      ]
+    },
+    {
+      "sI": [
+        {
+          "id": "374",
+          "fD": {
+            "aI": {
+              "code": "6E",
+              "name": "IndiGo",
+              "isLcc": true
+            },
+            "fN": "230",
+            "eT": "321"
+          },
+          "stops": 0,
+          "so": [],
+          "duration": 170,
+          "da": {
+            "code": "MAA",
+            "name": "Chennai Arpt",
+            "cityCode": "MAA",
+            "city": "Chennai",
+            "country": "India",
+            "countryCode": "IN",
+            "terminal": "Terminal 1"
+          },
+          "aa": {
+            "code": "DEL",
+            "name": "Delhi Indira Gandhi Intl",
+            "cityCode": "DEL",
+            "city": "Delhi",
+            "country": "India",
+            "countryCode": "IN",
+            "terminal": "Terminal 1"
+          },
+          "dt": "2026-03-26T13:00",
+          "at": "2026-03-26T15:50",
+          "cT": null,
+          "iand": false,
+          "isRs": false,
+          "sN": 0,
+          "israa": null
+        }
+      ],
+      "totalPriceList": [
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 15136.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 5136.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 3400,
+                "NF": 5136.5,
+                "TAF": 11736.5,
+                "TF": 15136.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 1648,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 9,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "ECONOMY",
+              "cB": "R",
+              "fB": "R0IPTL",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "PUBLISHED",
+          "id": "5-6032835220_0MAADEL6E230~868924247152641",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "374": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        },
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 17309.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 7309.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 5400,
+                "NF": 7309.5,
+                "TAF": 11909.5,
+                "TF": 17309.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 1821,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 9,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "ECONOMY",
+              "cB": "M",
+              "fB": "RMIP",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "SME",
+          "id": "5-6032835220_0MAADEL6E230~868924247155313",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "374": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        },
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 17418.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 7418.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 5500,
+                "NF": 7418.5,
+                "TAF": 11918.5,
+                "TF": 17418.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 1830,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 9,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "ECONOMY",
+              "cB": "J",
+              "fB": "RUIP",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "FLEXI_PLUS",
+          "id": "5-6032835220_0MAADEL6E230~868924247156466",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "374": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        },
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 18831.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 8831.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 6800,
+                "NF": 8831.5,
+                "TAF": 12031.5,
+                "TF": 18831.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 1943,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 9,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "ECONOMY",
+              "cB": "T",
+              "fB": "RTCT",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "PUBLISHED",
+          "id": "5-6032835220_0MAADEL6E230~868924247157972",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "374": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        },
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 33523.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 23523.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 18023,
+                "NF": 23523.5,
+                "TAF": 15500.5,
+                "TF": 33523.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 5412,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 2,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "BUSINESS",
+              "cB": "BR",
+              "fB": "D2B0IP",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "STRETCH",
+          "id": "5-6032835220_0MAADEL6E230~868924247159042",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "374": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        }
+      ]
+    },
+    {
+      "sI": [
+        {
+          "id": "51",
+          "fD": {
+            "aI": {
+              "code": "6E",
+              "name": "IndiGo",
+              "isLcc": true
+            },
+            "fN": "6831",
+            "eT": "321"
+          },
+          "stops": 0,
+          "so": [],
+          "duration": 170,
+          "da": {
+            "code": "MAA",
+            "name": "Chennai Arpt",
+            "cityCode": "MAA",
+            "city": "Chennai",
+            "country": "India",
+            "countryCode": "IN",
+            "terminal": "Terminal 1"
+          },
+          "aa": {
+            "code": "DEL",
+            "name": "Delhi Indira Gandhi Intl",
+            "cityCode": "DEL",
+            "city": "Delhi",
+            "country": "India",
+            "countryCode": "IN",
+            "terminal": "Terminal 1"
+          },
+          "dt": "2026-03-26T14:30",
+          "at": "2026-03-26T17:20",
+          "cT": null,
+          "iand": false,
+          "isRs": false,
+          "sN": 0,
+          "israa": null
+        }
+      ],
+      "totalPriceList": [
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 15136.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 5136.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 3400,
+                "NF": 5136.5,
+                "TAF": 11736.5,
+                "TF": 15136.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 1648,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 9,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "ECONOMY",
+              "cB": "R",
+              "fB": "R0IPTL",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "PUBLISHED",
+          "id": "5-6032835220_1MAADEL6E6831~868924247162787",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "51": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        },
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 17309.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 7309.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 5400,
+                "NF": 7309.5,
+                "TAF": 11909.5,
+                "TF": 17309.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 1821,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 9,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "ECONOMY",
+              "cB": "M",
+              "fB": "RMIP",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "SME",
+          "id": "5-6032835220_1MAADEL6E6831~868924247163892",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "51": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        },
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 17418.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 7418.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 5500,
+                "NF": 7418.5,
+                "TAF": 11918.5,
+                "TF": 17418.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 1830,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 9,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "ECONOMY",
+              "cB": "J",
+              "fB": "RUIP",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "FLEXI_PLUS",
+          "id": "5-6032835220_1MAADEL6E6831~868924247165260",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "51": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        },
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 18831.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 8831.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 6800,
+                "NF": 8831.5,
+                "TAF": 12031.5,
+                "TF": 18831.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 1943,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 9,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "ECONOMY",
+              "cB": "T",
+              "fB": "RTCT",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "PUBLISHED",
+          "id": "5-6032835220_1MAADEL6E6831~868924247166952",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "51": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        },
+        {
+          "fd": {
+            "totalPriceModel": {
+              "price": 33523.5,
+              "markupType": "DOMESTIC",
+              "platformMarkupBreakdown": {
+                "adminMarkup": 721,
+                "totalMarkup": 732,
+                "agentMarkup": 11
+              },
+              "netFare": 23523.5,
+              "totalPassenger": {
+                "TOTAL": 1,
+                "CHILD": 0,
+                "ADULT": 1,
+                "INFANT": 0
+              }
+            },
+            "ADULT": {
+              "fC": {
+                "BF": 18023,
+                "NF": 23523.5,
+                "TAF": 15500.5,
+                "TF": 33523.5
+              },
+              "afC": {
+                "TAF": {
+                  "OT": 5412,
+                  "MF": 75,
+                  "MFT": 13.5,
+                  "MU": 10000
+                }
+              },
+              "sR": 2,
+              "bI": {
+                "iB": "15 Kg (01 Piece only)",
+                "cB": "7 Kg"
+              },
+              "isHB": false,
+              "rT": 1,
+              "cc": "BUSINESS",
+              "cB": "BR",
+              "fB": "D2B0IP",
+              "mI": false,
+              "tjFlexFareBenefit": null
+            }
+          },
+          "fareIdentifier": "STRETCH",
+          "id": "5-6032835220_1MAADEL6E6831~868924247168040",
+          "sri": null,
+          "msri": [],
+          "messages": [],
+          "tai": {
+            "tbi": {
+              "baggageDetails": {
+                "51": [
+                  {
+                    "ADULT": {
+                      "iB": "15 Kg (01 Piece only)",
+                      "cB": "7 Kg"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "icca": false
+        }
+      ]
+    }
+  ]
+}
