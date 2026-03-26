@@ -43,3 +43,4 @@ Customer dashboard supports:
 - Blue
 
 The static structure remains shared while the active theme palette changes through shared theme utilities.
+
