@@ -1,5 +1,5 @@
 import { ReactNode, useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Plane } from 'lucide-react';
 import { applyTheme, themes, ThemeName } from '@skyitix/shared';
 

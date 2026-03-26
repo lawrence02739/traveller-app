@@ -1,39 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { setFilters } from '../features/flightSlice';
-import { ArrowRightLeft, X, Search, Calendar as CalendarIcon } from 'lucide-react';
-
-const AIRPORTS = [
-  { "id": 332, "code": "BAK", "cityCode": "BAK", "city": "Baku", "countryCode": "AZ", "country": "Azerbaijan", "name": null },
-  { "id": 3040, "code": "TMS", "cityCode": "TMS", "city": "Sao Tome Is", "countryCode": "ST", "country": "Sao Tome and Principe", "name": null },
-  { "id": 1828, "code": "BKB", "cityCode": "BKB", "city": "Bikaner", "countryCode": "IN", "country": "India", "name": null },
-  { "id": 4146, "code": "PVF", "cityCode": "PVF", "city": "Placerville", "countryCode": "US", "country": "United States", "name": null },
-  { "id": 1369, "code": "SEW", "cityCode": "SEW", "city": "Siwa", "countryCode": "EG", "country": "Egypt", "name": null },
-  { "id": 4742, "code": "HPY", "cityCode": "HPY", "city": "Baytown", "countryCode": "US", "country": "United States", "name": null },
-  { "id": 985, "code": "PUX", "cityCode": "PUX", "city": "Puerto Varas", "countryCode": "CL", "country": "Chile", "name": null },
-  { "id": 466, "code": "PPB", "cityCode": "PPB", "city": "Presidente Prudente", "countryCode": "BR", "country": "Brazil", "name": "A De Barros" },
-  { "id": 1681, "code": "AAH", "cityCode": "AAH", "city": "Aachen", "countryCode": "DE", "country": "Germany", "name": "Aachen Merzbruck Arpt" },
-  { "id": 1320, "code": "AAL", "cityCode": "AAL", "city": "Aalborg", "countryCode": "DK", "country": "Denmark", "name": "Aalborg Arpt" }
-];
-
-const PREFERRED_AIRLINES = [
-  { code: "9F", name: "9F Air" },
-  { code: "I8", name: "Aboriginal Air Services" },
-  { code: "9B", name: "AccessRail" },
-  { code: "WZ", name: "Acvila Air" },
-  { code: "KI", name: "Adam Air" },
-  { code: "Z7", name: "ADC Airlines" },
-  { code: "JP", name: "Adria Airways" },
-  { code: "DF", name: "Aebal" },
-  { code: "A3", name: "Aegean Air" }
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { setFilters, fetchAirports, fetchAirlines } from '../features/flightSlice';
+import { ArrowRightLeft, X, Search, Calendar as CalendarIcon, Loader2 } from 'lucide-react';
+import { AppDispatch, RootState } from '../store';
 
 // --- Custom Interactive Components --- //
 
-const CustomAirportDropdown = ({ value, onChange, label, alignRight = false }: { value: typeof AIRPORTS[0]; onChange: (val: typeof AIRPORTS[0]) => void; label: string; alignRight?: boolean }) => {
+const CustomAirportDropdown = ({ value, onChange, label, alignRight = false }: { value: any; onChange: (val: any) => void; label: string; alignRight?: boolean }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const dispatch = useDispatch<AppDispatch>();
+  const { airports } = useSelector((state: RootState) => state.flight);
+  const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -44,19 +23,28 @@ const CustomAirportDropdown = ({ value, onChange, label, alignRight = false }: {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const filtered = AIRPORTS.filter(a => a.city.toLowerCase().includes(search.toLowerCase()) || a.code.toLowerCase().includes(search.toLowerCase()));
+  useEffect(() => {
+    if (!open) return;
+    const triggerFetch = async () => {
+      setLoading(true);
+      await dispatch(fetchAirports(search));
+      setLoading(false);
+    };
+    const timer = setTimeout(triggerFetch, 300);
+    return () => clearTimeout(timer);
+  }, [search, open, dispatch]);
 
   return (
     <div className={`relative flex-1 p-3 hover:bg-[var(--color-panel-muted)] transition-all cursor-pointer ${open ? 'ring-2 ring-[var(--color-primary)] bg-[var(--color-panel-muted)] z-50 rounded' : ''}`} ref={ref}>
       <div onClick={() => { setOpen(true); setSearch(''); }} className="w-full h-full">
         <span className="text-xs text-[var(--color-subtle)] block mb-1">{label} <span className="float-right text-[var(--color-primary)]">▼</span></span>
-        <span className="text-sm sm:text-lg font-bold text-[var(--color-title)] block truncate">{value.city}</span>
-        <span className="text-xs text-[var(--color-subtle)] truncate block mt-1">{value.code}, {value.name || `${value.city} Arpt`}, {value.countryCode}</span>
+        <span className="text-sm sm:text-lg font-bold text-[var(--color-title)] block truncate">{value?.city || value?.code || 'Select Airport'}</span>
+        <span className="text-xs text-[var(--color-subtle)] truncate block mt-1">{value?.code || '---'}, {value?.name || `${value?.city || ''} Arpt`}, {value?.countryCode || ''}</span>
       </div>
       {open && (
         <div className={`absolute top-[110%] ${alignRight ? 'right-0' : 'left-0'} w-[280px] sm:w-[320px] z-[110] bg-[var(--color-panel-bg)] border border-[var(--color-border)] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] overflow-hidden animate-in fade-in zoom-in-95 duration-200`}>
           <div className="p-3 border-b border-[var(--color-border)] relative">
-            <Search className="h-4 w-4 text-[var(--color-subtle)] absolute left-6 top-1/2 -mt-2" />
+            {loading ? <Loader2 className="h-4 w-4 text-[var(--color-primary)] absolute left-6 top-1/2 -mt-2 animate-spin" /> : <Search className="h-4 w-4 text-[var(--color-subtle)] absolute left-6 top-1/2 -mt-2" />}
             <input
               autoFocus
               type="text"
@@ -67,22 +55,22 @@ const CustomAirportDropdown = ({ value, onChange, label, alignRight = false }: {
             />
           </div>
           <div className="max-h-[250px] overflow-y-auto pattern-list">
-            {filtered.map(airport => (
+            {(airports || []).map(airport => (
               <div
-                key={airport.id}
+                key={airport.id || airport.code}
                 onClick={() => { onChange(airport); setOpen(false); }}
                 className="flex justify-between items-center px-4 py-3 hover:bg-[var(--color-primary-soft)] border-b last:border-0 border-[var(--color-border)]/50 cursor-pointer group transition-colors"
               >
                 <div className="flex-1 overflow-hidden pr-2">
                   <p className="text-sm font-bold text-[var(--color-title)] group-hover:text-[var(--color-primary-strong)] flex items-center gap-2 truncate">
-                    {airport.city}, {airport.country}
+                    {airport.city || airport.name}, {airport.country || airport.countryCode}
                   </p>
                   <p className="text-xs text-[var(--color-subtle)] mt-0.5 truncate">{airport.name || `${airport.city} Arpt`}</p>
                 </div>
                 <span className="text-sm font-bold text-[var(--color-subtle)] group-hover:text-[var(--color-primary)]">{airport.code}</span>
               </div>
             ))}
-            {filtered.length === 0 && <div className="p-4 text-center text-[var(--color-subtle)] text-sm">No airports found</div>}
+            {(!airports || airports.length === 0) && !loading && <div className="p-4 text-center text-[var(--color-subtle)] text-sm">No airports found</div>}
           </div>
         </div>
       )}
@@ -92,7 +80,9 @@ const CustomAirportDropdown = ({ value, onChange, label, alignRight = false }: {
 
 const CustomDatePicker = ({ value, onChange, label, alignRight = false }: { value: string; onChange: (date: string) => void; label: string; alignRight?: boolean }) => {
   const [open, setOpen] = useState(false);
+  const [viewDate, setViewDate] = useState(value ? new Date(value) : new Date());
   const ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -101,11 +91,13 @@ const CustomDatePicker = ({ value, onChange, label, alignRight = false }: { valu
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const currentDate = value ? new Date(value) : new Date();
-  if (!value) currentDate.setFullYear(2026, 2, 25);
+  const changeMonth = (offset: number) => {
+    const newDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1);
+    setViewDate(newDate);
+  };
 
-  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-  const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+  const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+  const firstDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const blanks = Array.from({ length: firstDay }, (_, i) => i);
 
@@ -127,9 +119,9 @@ const CustomDatePicker = ({ value, onChange, label, alignRight = false }: { valu
       {open && (
         <div className={`absolute top-[110%] ${alignRight ? 'right-0' : 'left-0'} z-[110] w-[260px] sm:w-[280px] rounded-xl bg-[var(--color-panel-bg)] shadow-[0_10px_40px_rgba(0,0,0,0.15)] border border-[var(--color-border)] p-4 animate-in fade-in zoom-in-95 duration-200`}>
           <div className="flex justify-between items-center mb-4 border-b border-[var(--color-border)] pb-2 text-[var(--color-title)]">
-            <button type="button" className="p-1 hover:bg-[var(--color-panel-muted)] rounded text-[var(--color-subtle)] text-lg leading-none">‹</button>
-            <span className="font-bold text-sm">{currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
-            <button type="button" className="p-1 hover:bg-[var(--color-panel-muted)] rounded text-[var(--color-subtle)] text-lg leading-none">›</button>
+            <button type="button" onClick={(e) => { e.stopPropagation(); changeMonth(-1); }} className="p-1 hover:bg-[var(--color-panel-muted)] rounded text-[var(--color-subtle)] text-lg leading-none">‹</button>
+            <span className="font-bold text-sm">{viewDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+            <button type="button" onClick={(e) => { e.stopPropagation(); changeMonth(1); }} className="p-1 hover:bg-[var(--color-panel-muted)] rounded text-[var(--color-subtle)] text-lg leading-none">›</button>
           </div>
           <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-[var(--color-subtle)] mb-2 uppercase tracking-wide">
             {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => <div key={d}>{d}</div>)}
@@ -137,13 +129,14 @@ const CustomDatePicker = ({ value, onChange, label, alignRight = false }: { valu
           <div className="grid grid-cols-7 gap-1 text-center">
             {blanks.map(b => <div key={`blank-${b}`} className="p-2" />)}
             {days.map(d => {
-              const isSelected = value && new Date(value).getDate() === d;
+              const dateObj = new Date(viewDate.getFullYear(), viewDate.getMonth(), d);
+              const isSelected = value && new Date(value).toDateString() === dateObj.toDateString();
               return (
                 <button
                   key={d}
                   type="button"
                   onClick={() => {
-                    const sel = new Date(currentDate.getFullYear(), currentDate.getMonth(), d);
+                    const sel = new Date(viewDate.getFullYear(), viewDate.getMonth(), d);
                     onChange(`${sel.getFullYear()}-${String(sel.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
                     setOpen(false);
                   }}
@@ -157,7 +150,7 @@ const CustomDatePicker = ({ value, onChange, label, alignRight = false }: { valu
           </div>
           <div className="flex justify-between items-center mt-3 pt-2 border-t border-[var(--color-border)] text-xs font-bold text-[var(--color-primary)]">
             <button type="button" onClick={() => { onChange(''); setOpen(false); }} className="hover:text-[var(--color-primary-strong)]">Clear</button>
-            <button type="button" onClick={() => { onChange('2026-03-25'); setOpen(false); }} className="hover:text-[var(--color-primary-strong)]">Today</button>
+            <button type="button" onClick={() => { const now = new Date(); onChange(`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`); setOpen(false); }} className="hover:text-[var(--color-primary-strong)]">Today</button>
           </div>
         </div>
       )}
@@ -167,6 +160,11 @@ const CustomDatePicker = ({ value, onChange, label, alignRight = false }: { valu
 
 const CustomAirlineDropdown = ({ value, onChange, label }: { value: string; onChange: (val: string) => void; label: string; }) => {
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { airlines } = useSelector((state: RootState) => state.flight);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -177,18 +175,39 @@ const CustomAirlineDropdown = ({ value, onChange, label }: { value: string; onCh
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const airlineName = PREFERRED_AIRLINES.find(a => a.code === value)?.name || "Any Airline";
+  useEffect(() => {
+    if (!open) return;
+    const triggerFetch = async () => {
+      setLoading(true);
+      await dispatch(fetchAirlines({ userId: user?.id || 1, searchTerm: search }));
+      setLoading(false);
+    };
+    const timer = setTimeout(triggerFetch, 300);
+    return () => clearTimeout(timer);
+  }, [search, open, dispatch, user?.id]);
+
+  const selectedAirlineName = (airlines || []).find(a => a.code === value)?.name || "Any Airline";
 
   return (
     <div className={`relative flex items-center border border-[var(--color-border)] bg-[var(--color-page-bg)] rounded-md px-2 py-1.5 focus-within:ring-2 focus-within:ring-[var(--color-primary)] cursor-pointer ${open ? 'ring-2 ring-[var(--color-primary)] z-50' : ''}`} ref={ref}>
       <span className="text-sm font-semibold text-[var(--color-subtle)] border-r border-[var(--color-border)] pr-3 mr-3">{label}</span>
       <div className="flex-1 flex justify-between items-center min-w-[140px]" onClick={() => setOpen(!open)}>
-        <span className="text-sm font-bold text-[var(--color-title)] truncate">{airlineName}</span>
+        <span className="text-sm font-bold text-[var(--color-title)] truncate">{selectedAirlineName}</span>
         <span className="text-xs text-[var(--color-primary)] ml-2">▼</span>
       </div>
 
       {open && (
         <div className="absolute top-[110%] left-0 w-full z-[110] bg-[var(--color-panel-bg)] border border-[var(--color-border)] rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="p-2 border-b border-[var(--color-border)] bg-gray-50">
+             <input 
+                type="text" 
+                className="w-full text-xs p-2 border border-[var(--color-border)] rounded bg-white focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
+                placeholder="Search airlines..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                onClick={e => e.stopPropagation()}
+             />
+          </div>
           <div className="max-h-[250px] overflow-y-auto pattern-list p-2">
             <div
               onClick={() => { onChange(""); setOpen(false); }}
@@ -196,7 +215,7 @@ const CustomAirlineDropdown = ({ value, onChange, label }: { value: string; onCh
             >
               Any Airline
             </div>
-            {PREFERRED_AIRLINES.map(airline => (
+            {(airlines || []).map(airline => (
               <div
                 key={airline.code}
                 onClick={() => { onChange(airline.code); setOpen(false); }}
@@ -205,6 +224,7 @@ const CustomAirlineDropdown = ({ value, onChange, label }: { value: string; onCh
                 {airline.name}
               </div>
             ))}
+            {loading && <div className="p-4 text-center"><Loader2 className="h-4 w-4 animate-spin mx-auto text-[var(--color-primary)]" /></div>}
           </div>
         </div>
       )}
@@ -217,26 +237,35 @@ const CustomAirlineDropdown = ({ value, onChange, label }: { value: string; onCh
 
 export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const reduxFilters = useSelector((state: RootState) => state.flight.filters);
 
-  const [tripType, setTripType] = useState('one_way');
+  const [tripType, setTripType] = useState(reduxFilters?.tripType || 'one_way');
 
-  const [trips, setTrips] = useState([
-    { id: 1, from: AIRPORTS[0], to: AIRPORTS[1], date: '2026-03-25' }
-  ]);
+  const [trips, setTrips] = useState(() => {
+    if (reduxFilters?.trips && reduxFilters.trips.length > 0) {
+      return reduxFilters.trips.map((t, i) => ({
+        id: i + 1,
+        from: { code: t.origin, city: t.origin },
+        to: { code: t.destination, city: t.destination },
+        date: t.date
+      }));
+    }
+    return [{ id: 1, from: { code: reduxFilters?.origin || 'MAA', city: 'Chennai' }, to: { code: reduxFilters?.destination || 'DEL', city: 'Delhi' }, date: reduxFilters?.departureDate || '2026-03-25' }];
+  });
 
-  const [returnDate, setReturnDate] = useState('');
+  const [returnDate, setReturnDate] = useState(reduxFilters?.returnDate || '');
 
   const [showTravellers, setShowTravellers] = useState(false);
-  const [adults, setAdults] = useState(1);
-  const [childrenCount, setChildrenCount] = useState(0);
-  const [infants, setInfants] = useState(0);
-  const [travelClass, setTravelClass] = useState('Economy');
+  const [adults, setAdults] = useState(reduxFilters?.paxInfo?.ADULT || 1);
+  const [childrenCount, setChildrenCount] = useState(reduxFilters?.paxInfo?.CHILD || 0);
+  const [infants] = useState(reduxFilters?.paxInfo?.INFANT || 0);
+  const [travelClass, setTravelClass] = useState(reduxFilters?.travelClass?.toLowerCase().replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Economy');
 
-  const [preferredAirline, setPreferredAirline] = useState('');
-  const [isDirectFlight, setIsDirectFlight] = useState(true);
-  const [isConnectingFlight, setIsConnectingFlight] = useState(false);
-  const [fareType, setFareType] = useState('REGULAR');
+  const [preferredAirline, setPreferredAirline] = useState(reduxFilters?.preferredAirline?.[0] || '');
+  const [isDirectFlight, setIsDirectFlight] = useState(reduxFilters?.searchModifiers?.isDirectFlight ?? true);
+  const [isConnectingFlight, setIsConnectingFlight] = useState(reduxFilters?.searchModifiers?.isConnectingFlight ?? false);
+  const [fareType, setFareType] = useState(reduxFilters?.searchModifiers?.pft || 'REGULAR');
 
   const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -249,6 +278,7 @@ export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
 
   const handleReturnDateChange = (val: string) => {
     setReturnDate(val);
@@ -281,11 +311,10 @@ export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void
   const addFlight = () => {
     if (trips.length < 5) {
       const lastTrip = trips[trips.length - 1];
-      const nextDestIndex = (AIRPORTS.findIndex(c => c.code === lastTrip.to.code) + 1) % AIRPORTS.length;
       setTrips([...trips, {
         id: Date.now(),
         from: lastTrip.to,
-        to: AIRPORTS[nextDestIndex],
+        to: { code: '', city: '' },
         date: ''
       }]);
     }
@@ -315,7 +344,6 @@ export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void
     }));
   };
 
-  // Only render active rows. If One Way / Round Trip we only want the FIRST row.
   const activeTrips = tripType === 'multi_city' ? trips : trips.slice(0, 1);
 
   return (
@@ -326,10 +354,10 @@ export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void
           const isSelected = tripType === val;
           return (
             <label key={type} className="flex cursor-pointer items-center gap-2" onClick={() => {
-              setTripType(val);
-              if (val === 'one_way') {
+              const valString = val as "one_way" | "round_trip" | "multi_city";
+              setTripType(valString);
+              if (valString === 'one_way') {
                 setReturnDate('');
-                // Slice back to single trip when returning to 1-way
                 setTrips([trips[0]]);
               } else if (val === 'round_trip') {
                 setTrips([trips[0]]);
@@ -337,10 +365,9 @@ export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void
                 setReturnDate('');
                 if (trips.length < 2) {
                   const t1 = trips[0];
-                  const nextDestIndex = (AIRPORTS.findIndex(c => c.code === t1.to.code) + 1) % AIRPORTS.length;
                   setTrips([
                     t1,
-                    { id: Date.now(), from: t1.to, to: AIRPORTS[nextDestIndex], date: '' }
+                    { id: Date.now(), from: t1.to, to: { code: '', city: '' }, date: '' }
                   ]);
                 }
               }
@@ -426,8 +453,8 @@ export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void
                           ))}
                         </div>
                       </div>
-                      <button type="button" onClick={() => setShowTravellers(false)} className="w-full mt-4 rounded-lg bg-[var(--color-primary)] py-3 text-sm font-extrabold text-[var(--color-on-primary)] shadow-sm transition hover:opacity-90">
-                        APPLY
+                      <button type="button" onClick={handleSearch} className="w-full rounded-lg bg-[var(--color-primary)] py-2 text-md font-bold text-[var(--color-on-primary)] shadow-[0_4px_14px_0_rgba(0,0,0,0.2)] transition-all hover:scale-105 active:scale-95">
+                        SEARCH FLIGHTS
                       </button>
                     </div>
                   </div>
@@ -461,8 +488,6 @@ export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void
       </div>
 
       <div className="mt-8 flex flex-wrap items-center gap-6 pb-2">
-
-        {/* Upgraded Airlines Dropdown */}
         <CustomAirlineDropdown value={preferredAirline} onChange={setPreferredAirline} label="Prefered Airlines" />
 
         <label className="flex items-center gap-2 cursor-pointer ml-4">
@@ -490,13 +515,13 @@ export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void
         </div>
       </div>
 
-      <div className="relative mt-12 flex justify-center h-0 overflow-visible z-20">
+      <div className="mt-12 flex justify-center pb-4">
         <button
           onClick={handleSearch}
           type="button"
-          className="absolute -top-6 rounded-lg bg-[var(--color-primary)] px-20 py-4 text-lg font-black text-[var(--color-on-primary)] shadow-[0_4px_14px_0_rgba(0,0,0,0.3)] transition-all hover:scale-105 active:scale-95 border border-[var(--color-border)]"
+          className="rounded-lg bg-[var(--color-primary)] px-10 py-3 text-md font-bold text-[var(--color-on-primary)] shadow-[0_4px_14px_0_rgba(0,0,0,0.3)] transition-all hover:scale-105 active:scale-95 border border-[var(--color-border)] uppercase tracking-widest"
         >
-          Search
+          Search Flights
         </button>
       </div>
     </div>

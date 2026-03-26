@@ -1,4 +1,4 @@
-import { Flight, PricingOption } from '../types/flight';
+import { Flight } from '../types/flight';
 
 /**
  * Formats minutes into "Xh Ym"
@@ -35,12 +35,13 @@ export function parseFlightData(rawFlightList: any[]): Flight[] {
     const firstSegment = segments[0];
     const lastSegment = segments[segments.length - 1];
 
-    // Compute total duration (API might give duration on first segment or sum, here we sum if not provided on flight level)
+    // Compute total duration
     const totalDurationMins = firstSegment.duration || 0; 
     
-    const pricingOptions: PricingOption[] = totalPriceList.map((tp: any) => {
+    const pricingOptions: any[] = totalPriceList.map((tp: any) => {
       const adultFare = tp.fd?.ADULT?.fC || {};
       const adultFareDetails = tp.fd?.ADULT || {};
+      const totalPriceModel = tp.fd?.totalPriceModel || {};
       
       return {
         id: tp.id,
@@ -51,9 +52,15 @@ export function parseFlightData(rawFlightList: any[]): Flight[] {
         code: adultFareDetails.cB || '',
         seats: adultFareDetails.sR || 0,
         class: adultFareDetails.cc || 'ECONOMY',
-        price: tp.fd?.totalPriceModel?.price || 0,
-        netfare: tp.fd?.totalPriceModel?.netFare || 0,
+        price: totalPriceModel.price || adultFare.TF || 0,
+        netfare: totalPriceModel.netFare || adultFare.NF || 0,
+        totalfare: totalPriceModel.price || adultFare.TF || 0,
         breakdown: {
+          agent: {
+            preferredAirlineMarkup: 0,
+            commonMarkup: 0,
+            specialFlightDestinationMarkup: 0
+          },
           baseFare: adultFare.BF || 0,
           adultFare: adultFare.TF || 0,
           taxAndCharges: adultFare.TAF || 0,
@@ -63,11 +70,13 @@ export function parseFlightData(rawFlightList: any[]): Flight[] {
           adult: {
              baseFare: adultFare.BF || 0,
              taxAndCharges: adultFare.TAF || 0,
+             totalFare: adultFare.TF || 0,
              userDevelopmentFee: 0,
              k3Tax: 0,
-             totalFare: adultFare.TF || 0,
              airlineMisc: 0
-          }
+          },
+          child: { baseFare: 0, taxAndCharges: 0, totalFare: 0, userDevelopmentFee: 0, k3Tax: 0, airlineMisc: 0 },
+          infant: { baseFare: 0, taxAndCharges: 0, totalFare: 0, userDevelopmentFee: 0, k3Tax: 0, airlineMisc: 0 }
         }
       };
     });
@@ -98,14 +107,17 @@ export function parseFlightData(rawFlightList: any[]): Flight[] {
       terminalarrival: lastSegment.aa?.terminal || '',
       flightNumber: `${firstSegment.fD?.aI?.code}-${firstSegment.fD?.fN}`,
       endTerminal: lastSegment.aa?.terminal || '',
-      layoverTime: '', // calculate if needed for multi segment
+      layoverTime: '',
       arrival: lastSegment.aa?.name || '',
       arrivalLocation: lastSegment.aa?.city || '',
       class: defaultClass,
       minprice: minprice.toString(),
       stops: segments.length - 1,
       seats: defaultSeats,
+      fareIdentifier: pricingOptions[0]?.fareIdentifier || 'PUBLISHED',
+      allFares: Array.from(new Set(pricingOptions.map(p => p.fareIdentifier))),
       pricingOptions
     } as Flight;
   }).filter(Boolean) as Flight[];
 }
+

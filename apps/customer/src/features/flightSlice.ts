@@ -1,23 +1,28 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Flight, FlightSearchFilters, BookingDetails } from '../types/flight';
-import mockData from '../constants/mockFlightRaw.json';
+import { Flight, FlightSearchFilters, DynamicFilters } from '../types/flight';
 import { parseFlightData } from '../utils/flightMapper';
 
 interface FlightState {
-  flights: Flight[]; // Can be used for onward flights
-  returnFlights: Flight[]; // For round trip return flights
-  multiCityFlights: Flight[][]; // For multi city segments
+  flights: Flight[];
+  returnFlights: Flight[];
+  multiCityFlights: Flight[][];
+  airports: any[];
+  airlines: any[];
+  fareFilters: string[];
   loading: boolean;
   error: string | null;
   filters: FlightSearchFilters;
-  selectedFlight: Flight | null;
-  bookingDetails: BookingDetails | null;
+  selectedMultiCityIndex: number;
+  dynamicFilters: DynamicFilters | null;
 }
 
 const initialState: FlightState = {
   flights: [],
   returnFlights: [],
   multiCityFlights: [],
+  airports: [],
+  airlines: [],
+  fareFilters: [],
   loading: false,
   error: null,
   filters: {
@@ -28,9 +33,11 @@ const initialState: FlightState = {
     travelClass: 'Economy',
     tripType: 'one_way',
   },
-  selectedFlight: null,
-  bookingDetails: null,
+  selectedMultiCityIndex: 0,
+  dynamicFilters: null,
 };
+
+import { flightApi } from '../api/flight.api';
 
 // Actual API call
 export const fetchFlights = createAsyncThunk(
@@ -80,36 +87,49 @@ export const fetchFlights = createAsyncThunk(
         }
       };
 
-      const response = await fetch('http://192.168.101.73:8081/backend/api/v1/booking/search?agent=2&partner=1', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWdlbnQiLCJyb2xlSWQiOjMsInN1YiI6ImFnZW50QHlvcG1haWwuY29tIiwiaWF0IjoxNzc0NTE2MDkxLCJleHAiOjE3NzQ1MTk2OTF9.QI2nEmlwjDt3tkuGazI8zb8MJwDeGoQVujyt2miyQhc'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch flights');
-      }
-
-      const data = await response.json();
-      const tripinfo = data?.data?.tripinfo || data?.tripinfo || {};
+      console.log('Fetching flights with payload:', JSON.stringify(payload, null, 2));
+      const data = await flightApi.searchFlights(payload);
+      console.log('Search response data:', data);
+      
+      // Corrected JSON path based on user screenshot: response.searchResult.tripInfos
+      const tripinfo = data?.response?.searchResult?.tripInfos || data?.data?.tripinfo || data?.tripinfo || {};
+      console.log('Parsed tripinfo:', tripinfo);
 
       const onwardParsed = parseFlightData(tripinfo.ONWARD || []);
       const returnParsed = parseFlightData(tripinfo.RETURN || []);
 
       let multiParsed: Flight[][] = [];
       if (filters.tripType === 'multi_city') {
-        // Find arrays in tripinfo to support dynamic multicity response keys
         const keys = Object.keys(tripinfo);
         multiParsed = keys.map(k => parseFlightData(tripinfo[k] || [])).filter(arr => arr.length > 0);
       }
 
-      return { onward: onwardParsed, returnData: returnParsed, multiCity: multiParsed };
+      const dynamicFilters = data?.response?.searchResult?.dynamicFilters || {};
+      
+      console.log('Final parsed onward flights:', onwardParsed.length);
+      return { onward: onwardParsed, returnData: returnParsed, multiCity: multiParsed, dynamicFilters };
+
+
     } catch (error: any) {
-      throw new Error(error.message || 'Failed to fetch flights');
+      throw new Error(error.response?.data?.message || error.message || 'Failed to fetch flights');
     }
+  }
+);
+
+
+export const fetchAirports = createAsyncThunk(
+  'flight/fetchAirports',
+  async (searchTerm: string) => {
+    const data = await flightApi.getAirports(searchTerm);
+    return data?.response || [];
+  }
+);
+
+export const fetchAirlines = createAsyncThunk(
+  'flight/fetchAirlines',
+  async ({ userId, searchTerm }: { userId: number; searchTerm: string }) => {
+    const data = await flightApi.getAirlines(userId, searchTerm);
+    return data?.response || [];
   }
 );
 
@@ -120,17 +140,8 @@ const flightSlice = createSlice({
     setFilters(state, action: PayloadAction<Partial<FlightSearchFilters>>) {
       state.filters = { ...state.filters, ...action.payload };
     },
-    selectFlight(state, action: PayloadAction<Flight>) {
-      state.selectedFlight = action.payload;
-    },
-    updateBookingDetails(state, action: PayloadAction<Partial<BookingDetails>>) {
-      state.bookingDetails = state.bookingDetails
-        ? { ...state.bookingDetails, ...action.payload }
-        : (action.payload as BookingDetails);
-    },
-    clearBooking(state) {
-      state.selectedFlight = null;
-      state.bookingDetails = null;
+    setSelectedMultiCityIndex(state, action: PayloadAction<number>) {
+      state.selectedMultiCityIndex = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -144,14 +155,33 @@ const flightSlice = createSlice({
         state.flights = action.payload.onward;
         state.returnFlights = action.payload.returnData;
         state.multiCityFlights = action.payload.multiCity;
+        state.dynamicFilters = action.payload.dynamicFilters || null;
+
+        // Extract dynamic fare filters
+        const allFlights = [
+          ...state.flights,
+          ...state.returnFlights,
+          ...state.multiCityFlights.flat()
+        ];
+        const fares = new Set<string>();
+        allFlights.forEach(f => {
+           if (f.fareIdentifier) fares.add(f.fareIdentifier);
+        });
+        state.fareFilters = Array.from(fares);
       })
       .addCase(fetchFlights.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch flights';
+      })
+      .addCase(fetchAirports.fulfilled, (state, action) => {
+        state.airports = action.payload;
+      })
+      .addCase(fetchAirlines.fulfilled, (state, action) => {
+        state.airlines = action.payload;
       });
   },
 });
 
-export const { setFilters, selectFlight, updateBookingDetails, clearBooking } = flightSlice.actions;
-
+export const { setFilters, setSelectedMultiCityIndex } = flightSlice.actions;
 export default flightSlice.reducer;
+

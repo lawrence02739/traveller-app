@@ -62,6 +62,8 @@ export interface Flight {
     minprice: string;
     stops: number;
     seats: number;
+    fareIdentifier: string;
+    allFares: string[];
     pricingOptions: {
         id: string;
         fare: number;
@@ -199,3 +201,21 @@ export interface ContactInfo {
   email: string;
   phone: string;
 }
+
+export interface DynamicFilterCategory {
+    totalDuration: number[];
+    listOfAirLines: string[];
+    istOfFareIdentifiers: string[]; // Maintaining user provided typo
+    listOfDepartureTerminal: Record<string, string[]>;
+    ArrivalTimes: string[];
+    listOfCabinClasses: string[];
+    listOfFares: number[];
+    noOfStops: number[];
+    listOfArrivalTerminal: Record<string, string[]>;
+    DepartureTimes: string[];
+    listOfLayOverDuration?: number[];
+    listOfLayOverAirport?: string[];
+    stopOverAirports?: string[];
+}
+
+export type DynamicFilters = Record<string, DynamicFilterCategory>;
