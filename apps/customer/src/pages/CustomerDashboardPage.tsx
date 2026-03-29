@@ -30,7 +30,7 @@ export const CustomerDashboardPage = (): JSX.Element => {
 
   return (
     <DashboardLayout
-      portalTitle="Skyitix Customer"
+      portalTitle="traveller app"
       navItems={navItems}
       activeLabel="Dashboard"
       userName="Olivia Martin"

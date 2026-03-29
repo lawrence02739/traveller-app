@@ -25,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             <RouteDom path="/dashboard" element={<AuthGuard><FlightSearchPage /></AuthGuard>} />
             <RouteDom path="/search" element={<AuthGuard><FlightSearchPage /></AuthGuard>} />
             <RouteDom path="/flights" element={<AuthGuard><FlightListPage /></AuthGuard>} />
+            <RouteDom path="/booking" element={<AuthGuard><BookingFlowPage /></AuthGuard>} />
             <RouteDom path="/book/:flightId" element={<AuthGuard><BookingFlowPage /></AuthGuard>} />
             <RouteDom path="/book/confirm" element={<AuthGuard><BookingFlowPage /></AuthGuard>} />
           </RoutesDom>

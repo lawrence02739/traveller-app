@@ -73,8 +73,8 @@ export const DashboardLayout = ({
 
           <section>{children}</section>
 
-          <footer className="mt-8 border-t border-[var(--color-border)] pt-4 text-xs text-[var(--color-subtle)]">
-            Shared static footer • Skyitix yellow-inspired dashboard shell.
+          <footer className="mt-8 border-t border-[var(--color-border)] pt-4 text-center text-xs text-[var(--color-subtle)]">
+            traveller app by lawrence
           </footer>
         </main>
       </div>

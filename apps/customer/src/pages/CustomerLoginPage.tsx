@@ -51,9 +51,9 @@ export const CustomerLoginPage = (): JSX.Element => {
         } else {
            setErrorMsg('Invalid response from server.');
         }
-      } catch (err: any) {
+      } catch (err) {
         setErrorMsg('Authentication failed. Please check your credentials.');
-        console.error("Login Failed", err);
+        console.error("Login Failed", err instanceof Error ? err.message : err);
       } finally {
         setLoading(false);
       }
@@ -110,7 +110,7 @@ export const CustomerLoginPage = (): JSX.Element => {
           <div className="rounded-[2rem] bg-[var(--color-panel-bg)] p-6 shadow-soft">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold text-[var(--color-primary-strong)]">Skyitix</p>
+                <p className="text-sm font-semibold text-[var(--color-primary-strong)]">traveller app</p>
                 <h1 className="mt-2 text-4xl font-bold text-[var(--color-title)]">Customer portal made for mobile first booking flow.</h1>
               </div>
               <div className="h-16 w-16 rounded-[1.5rem] bg-[var(--color-primary)]" />

@@ -29,7 +29,7 @@ export const TRIP_TYPES = [
 export const MOCK_FLIGHTS = [
   {
     id: 'f1',
-    airline: 'Skyitix Airlines',
+    airline: 'traveller app Airlines',
     flightNumber: 'SK-101',
     departureTime: '08:45',
     arrivalTime: '16:30',

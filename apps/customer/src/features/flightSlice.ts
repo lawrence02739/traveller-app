@@ -104,7 +104,7 @@ export const fetchFlights = createAsyncThunk(
         multiParsed = keys.map(k => parseFlightData(tripinfo[k] || [])).filter(arr => arr.length > 0);
       }
 
-      const dynamicFilters = data?.response?.searchResult?.dynamicFilters || {};
+      const dynamicFilters = data?.dynamicFilters || data?.response?.searchResult?.dynamicFilters || {};
       
       console.log('Final parsed onward flights:', onwardParsed.length);
       return { onward: onwardParsed, returnData: returnParsed, multiCity: multiParsed, dynamicFilters };

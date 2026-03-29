@@ -7,7 +7,8 @@ import { AppDispatch, RootState } from '../store';
 
 // --- Custom Interactive Components --- //
 
-const CustomAirportDropdown = ({ value, onChange, label, alignRight = false }: { value: any; onChange: (val: any) => void; label: string; alignRight?: boolean }) => {
+interface Airport { code: string; name?: string; city?: string; countryCode?: string; }
+const CustomAirportDropdown = ({ value, onChange, label, alignRight = false }: { value: Airport | null; onChange: (val: Airport) => void; label: string; alignRight?: boolean }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const dispatch = useDispatch<AppDispatch>();
@@ -78,7 +79,7 @@ const CustomAirportDropdown = ({ value, onChange, label, alignRight = false }: {
   );
 };
 
-const CustomDatePicker = ({ value, onChange, label, alignRight = false }: { value: string; onChange: (date: string) => void; label: string; alignRight?: boolean }) => {
+const CustomDatePicker = ({ value, onChange, label, alignRight = false, minDate }: { value: string; onChange: (date: string) => void; label: string; alignRight?: boolean; minDate?: string }) => {
   const [open, setOpen] = useState(false);
   const [viewDate, setViewDate] = useState(value ? new Date(value) : new Date());
   const ref = useRef<HTMLDivElement>(null);
@@ -130,18 +131,25 @@ const CustomDatePicker = ({ value, onChange, label, alignRight = false }: { valu
             {blanks.map(b => <div key={`blank-${b}`} className="p-2" />)}
             {days.map(d => {
               const dateObj = new Date(viewDate.getFullYear(), viewDate.getMonth(), d);
-              const isSelected = value && new Date(value).toDateString() === dateObj.toDateString();
+              const isToday = new Date().toDateString() === dateObj.toDateString();
+              const isPast = minDate && dateObj < new Date(minDate + 'T00:00:00');
+              const isSelected = value && new Date(value + 'T00:00:00').toDateString() === dateObj.toDateString();
+              
               return (
                 <button
                   key={d}
+                  disabled={!!isPast}
                   type="button"
                   onClick={() => {
                     const sel = new Date(viewDate.getFullYear(), viewDate.getMonth(), d);
                     onChange(`${sel.getFullYear()}-${String(sel.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
                     setOpen(false);
                   }}
-                  className={`p-1 w-8 h-8 flex items-center justify-center mx-auto rounded-full text-sm font-semibold hover:bg-[var(--color-primary-soft)] hover:text-[var(--color-primary-strong)] transition-colors ${isSelected ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md' : 'text-[var(--color-title)]'
-                    }`}
+                  className={`p-1 w-8 h-8 flex items-center justify-center mx-auto rounded-full text-sm font-semibold transition-colors
+                    ${isPast ? 'text-gray-200 cursor-not-allowed' : 'text-[var(--color-title)] hover:bg-[var(--color-primary-soft)] hover:text-[var(--color-primary-strong)]'}
+                    ${isSelected ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md' : ''}
+                    ${isToday && !isSelected ? 'border border-[var(--color-primary)]' : ''}
+                  `}
                 >
                   {d}
                 </button>
@@ -399,12 +407,23 @@ export const SearchForm = ({ onSearchCallback }: { onSearchCallback?: () => void
             </div>
 
             <div className={`flex flex-col sm:flex-row border border-[var(--color-border)] rounded-md shadow-sm ${tripType === 'multi_city' ? 'lg:w-[25%]' : 'lg:w-[30%]'}`}>
-              <CustomDatePicker value={trip.date} onChange={(v) => updateTrip(trip.id, 'date', v)} label="Departure" />
+              <CustomDatePicker 
+                value={trip.date} 
+                onChange={(v) => updateTrip(trip.id, 'date', v)} 
+                label="Departure" 
+                minDate={idx === 0 ? new Date().toISOString().split('T')[0] : trips[idx - 1]?.date}
+              />
 
               {idx === 0 && tripType !== 'multi_city' && (
                 <>
                   <div className="h-px sm:h-auto sm:w-px bg-[var(--color-border)]" />
-                  <CustomDatePicker value={returnDate} onChange={handleReturnDateChange} label="Return" alignRight={true} />
+                  <CustomDatePicker 
+                    value={returnDate} 
+                    onChange={handleReturnDateChange} 
+                    label="Return" 
+                    alignRight={true} 
+                    minDate={trip.date}
+                  />
                 </>
               )}
             </div>
