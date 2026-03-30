@@ -29,6 +29,8 @@ const PassengerSchema = Yup.object().shape({
   phone: Yup.string().matches(/^\+?[\d\s-]{10,15}$/, 'Invalid number').required('Required'),
   dob: Yup.string().optional(),
   nationality: Yup.string().optional(),
+  gstNumber: Yup.string().optional(),
+  companyName: Yup.string().optional(),
 });
 
 export const BookingFlowPage = () => {
@@ -44,19 +46,54 @@ export const BookingFlowPage = () => {
   const [isValidating, setIsValidating] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'razorpay'>('razorpay');
 
+  // Session Results & State
+  const [reviewResult, setReviewResult] = useState<any>(null);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+
   // Ancillary Selection State
   const [selectedSeats, setSelectedSeats] = useState<{ [fId: string]: string }>({});
   const [selectedBaggage, setSelectedBaggage] = useState<{ [fId: string]: number }>({});
   const [selectedMeals, setSelectedMeals] = useState<{ [fId: string]: string }>({});
 
   useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const formatTimeLeft = (seconds: number) => {
+    if (seconds <= 0) return "00:00";
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+  };
+
+  useEffect(() => {
     const validate = async () => {
       if (!selectedFlights?.length || !selectedFlights[0]?.flight) return;
       setIsValidating(true);
       try {
-        await Promise.all(selectedFlights.map(item =>
-          flightApi.reviewBooking({ flightId: item.flight.id, fareType: item.fareIdentifier })
-        ));
+        const priceIds = selectedFlights.map(item => {
+          const po = item.flight.pricingOptions.find(p => p.fareIdentifier === item.fareIdentifier);
+          return po?.id;
+        }).filter(Boolean) as string[];
+
+        const totalPriceValue = selectedFlights.reduce((acc, item) => {
+          const po = item.flight.pricingOptions.find(p => p.fareIdentifier === item.fareIdentifier);
+          return acc + (po?.price || 0) + (po?.totalMarkup || 0);
+        }, 0);
+
+        const data = await flightApi.reviewBooking({
+          priceIds,
+          totalPrice: totalPriceValue
+        });
+
+        if (data?.response) {
+          setReviewResult(data.response);
+          if (data.response.conditions?.st) {
+            setTimeLeft(data.response.conditions.st);
+          }
+        }
       } catch (err) { console.error("Validation failed", err); }
       finally { setIsValidating(false); }
     };
@@ -64,7 +101,10 @@ export const BookingFlowPage = () => {
   }, [selectedFlights]);
 
   const formik = useFormik({
-    initialValues: { title: 'Mr', firstName: '', lastName: '', email: '', phone: '', dob: '', nationality: 'Indian' },
+    initialValues: { 
+      title: 'Mr', firstName: '', lastName: '', email: '', phone: '', 
+      dob: '', nationality: 'Indian', gstNumber: '', companyName: '' 
+    },
     validationSchema: PassengerSchema,
     onSubmit: () => { setStep(s => s + 1); window.scrollTo(0, 0); },
   });
@@ -88,13 +128,22 @@ export const BookingFlowPage = () => {
     );
   }
 
-  const totalBasePrice = (selectedFlights || []).reduce((s, f) => s + Number(f.flight.minprice || 0), 0);
+  const totalBasePrice = reviewResult?.totalPriceInfo?.totalFareDetail?.fC?.BF || (selectedFlights || []).reduce((s, item) => {
+    const po = item.flight.pricingOptions.find(p => p.fareIdentifier === item.fareIdentifier);
+    return s + (po?.breakdown?.baseFare || 0);
+  }, 0);
+
   const ancillaryPrice = (selectedFlights || []).reduce((s, f) => {
     const bPrice = selectedBaggage[f.flight.id] ? (selectedBaggage[f.flight.id] * 300) : 0;
     const mPrice = selectedMeals[f.flight.id] ? 650 : 0;
     return s + bPrice + mPrice;
   }, 0);
-  const taxes = 35484.5;
+
+  const taxes = reviewResult?.totalPriceInfo?.totalFareDetail?.fC?.TAF || (selectedFlights || []).reduce((s, item) => {
+    const po = item.flight.pricingOptions.find(p => p.fareIdentifier === item.fareIdentifier);
+    return s + (po?.breakdown?.taxAndCharges || 0);
+  }, 0);
+
   const platformFee = 2175.5;
   const totalPrice = totalBasePrice + ancillaryPrice + taxes + platformFee;
 
@@ -316,6 +365,20 @@ export const BookingFlowPage = () => {
                           <FormField kind="input" type="email" label="Email Address" name="email" value={formik.values.email} onChange={formik.handleChange} />
                           <FormField kind="input" type="tel" label="Phone Number" name="phone" value={formik.values.phone} onChange={formik.handleChange} />
                         </div>
+                        {(reviewResult?.conditions?.dob?.adobr || reviewResult?.conditions?.dob?.idobr) && (
+                          <div className="mt-6 pt-6 border-t border-[var(--color-border)]">
+                            <FormField kind="input" type="date" label="Date of Birth" name="dob" value={formik.values.dob} onChange={formik.handleChange} onBlur={formik.handleBlur} />
+                          </div>
+                        )}
+                        {reviewResult?.conditions?.gst?.gstappl && (
+                          <div className="mt-8 pt-8 border-t border-[var(--color-border)]">
+                            <h4 className="text-[10px] font-black text-[var(--color-primary)] uppercase tracking-[0.2em] mb-6">GST Information (Optional)</h4>
+                            <div className="grid gap-6 md:grid-cols-2">
+                              <FormField kind="input" label="GST Number" name="gstNumber" value={formik.values.gstNumber} onChange={formik.handleChange} />
+                              <FormField kind="input" label="Company Name" name="companyName" value={formik.values.companyName} onChange={formik.handleChange} />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </form>
                   </div>
@@ -478,7 +541,7 @@ export const BookingFlowPage = () => {
             </button>
             <div className="hidden md:flex items-center gap-3 text-[10px] font-black opacity-80 uppercase tracking-widest">
               <Clock className="h-4 w-4" />
-              <span>Session ends in <span className="text-white">01:10</span></span>
+              <span>Session ends in <span className="text-white">{formatTimeLeft(timeLeft)}</span></span>
             </div>
             <button
               disabled={isProcessing || isValidating}

@@ -273,7 +273,7 @@ export const FlightListPage = () => {
 
                 {/* Right: Price and Action */}
                 <div className="flex items-center justify-between lg:justify-end gap-3 lg:gap-4 w-full lg:w-auto pt-2 lg:pt-0 border-t lg:border-t-0 border-gray-100 lg:border-transparent mt-1 lg:mt-0">
-                  <p className="text-sm lg:text-base font-black text-[var(--color-title)] whitespace-nowrap">₹{po.price.toLocaleString('en-IN')}</p>
+                  <p className="text-sm lg:text-base font-black text-[var(--color-title)] whitespace-nowrap">₹{((po.price || 0) + (po.totalMarkup || 0)).toLocaleString('en-IN')}</p>
                   <button
                     onClick={() => handleSelect(flight, isReturnCard, po.fareIdentifier)}
                     className="bg-[var(--color-primary)] text-white text-[10px] sm:text-xs font-black uppercase tracking-widest px-4 py-2 rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-sm"

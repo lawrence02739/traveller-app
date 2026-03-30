@@ -9,6 +9,7 @@ export interface PricingOption {
     class: string;
     price: number;
     netfare: number;
+    totalMarkup: number;
     breakdown: {
         baseFare: number;
         adultFare: number;
@@ -75,6 +76,7 @@ export interface Flight {
         class: string;
         price: number;
         netfare: number;
+        totalMarkup: number;
         totalfare?: number;
         breakdown: {
             agent?: AgentMarkupAmount,

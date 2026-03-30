@@ -54,6 +54,7 @@ export function parseFlightData(rawFlightList: any[]): Flight[] {
         class: adultFareDetails.cc || 'ECONOMY',
         price: totalPriceModel.price || adultFare.TF || 0,
         netfare: totalPriceModel.netFare || adultFare.NF || 0,
+        totalMarkup: totalPriceModel.platformMarkupBreakdown?.totalMarkup || 0,
         totalfare: totalPriceModel.price || adultFare.TF || 0,
         breakdown: {
           agent: {
